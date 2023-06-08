@@ -1,0 +1,43 @@
+FROM nvidia/cuda:12.1.1-devel-ubuntu22.04
+
+LABEL org.opencontainers.image.source https://github.com/rmkraus/workspaces
+
+# update base image
+RUN apt-get -y update; apt-get -y upgrade;
+
+# install os package manager dependencies
+RUN apt-get install -y \
+	curl \
+	git \
+	jq \
+	make \
+    sshuttle \
+	sudo \
+	tar \
+	vim \
+	wget \
+	zsh;
+
+# install homebrew and kbenv
+RUN PROJECT="little-angry-clouds/kubernetes-binaries-managers"; \
+    URL=$(curl -s https://api.github.com/repos/$PROJECT/releases/latest | jq -r '.assets[] | select(.name | contains("linux_amd64")).browser_download_url'); \
+	wget $URL -O /tmp/kbenv.tar.gz; \
+	cd /tmp; tar xvzf kbenv.tar.gz; \
+	mv helm-*/* kubectl-*/* oc-*/* /usr/local/bin; \
+    binary=kubectl; ln -s /usr/local/bin/$binary-wrapper /usr/local/bin/$binary; \
+    binary=helm; ln -s /usr/local/bin/$binary-wrapper /usr/local/bin/$binary; \
+    binary=oc; ln -s /usr/local/bin/$binary-wrapper /usr/local/bin/$binary;
+
+# install k9s
+RUN PROJECT="derailed/k9s"; \
+    URL=$(curl -s https://api.github.com/repos/$PROJECT/releases/latest | jq -r '.assets[] | select(.name | contains("Linux_amd64")).browser_download_url'); \
+	wget $URL -O /tmp/k9s.tar.gz; \
+	cd /tmp; tar xvzf k9s.tar.gz; \
+	mv k9s /usr/local/bin;
+
+# setup distrobox links
+RUN ln -s /usr/bin/distrobox-host-exec /usr/local/bin/docker
+
+# remove cache files
+RUN apt-get clean; 	rm -rf /tmp/*; rm -rf /var/cache/*
+

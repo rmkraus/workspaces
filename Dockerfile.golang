@@ -1,0 +1,15 @@
+FROM ghcr.io/rmkraus/workspace:base
+
+LABEL org.opencontainers.image.source https://github.com/rmkraus/workspaces
+
+# install golang
+RUN cd /tmp; \
+    vers=$(curl -s https://go.dev/dl/ | egrep -o 'go1.20.[0-9]+.linux-amd64.tar.gz' | head -n 1); \
+    curl -L https://go.dev/dl/$vers -o go.tar.gz; \
+    tar -C /usr/local -xzf go.tar.gz;
+
+ENV PATH="${PATH}:/usr/local/go/bin:~/go/bin"
+
+# remove cache files
+RUN apt-get clean; 	rm -rf /tmp/*; rm -rf /var/cache/*
+
