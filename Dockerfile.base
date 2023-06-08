@@ -11,6 +11,8 @@ RUN apt-get install -y \
 	git \
 	jq \
 	make \
+    python3.10 \
+    python3.10-venv \
     sshuttle \
 	sudo \
 	tar \
