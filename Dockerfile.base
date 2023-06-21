@@ -8,6 +8,7 @@ RUN apt-get -y update; apt-get -y upgrade;
 # install os package manager dependencies
 RUN apt-get install -y \
 	curl \
+    fzf \
 	git \
 	jq \
     language-pack-en \
@@ -20,6 +21,7 @@ RUN apt-get install -y \
 	tar \
 	vim \
 	wget \
+    zip \
 	zsh;
 
 # install homebrew and kbenv
